@@ -32,6 +32,12 @@
     font-size: 1.1em;
   }
 
+  #таймер-заглавие {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
   #таймер {
     font-size: 1.3em;
     margin-bottom: 20px;
@@ -50,7 +56,7 @@
     color: #196ba3;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
+    cursor: default; /* бутонът вече не е активен */
   }
 
   #резултат {
@@ -58,10 +64,8 @@
     font-size: 1.5em;
     white-space: pre-line;
     font-weight: bold;
-    border: 2px solid white;
-    padding: 20px;
-    display: inline-block;
     text-transform: uppercase;
+    display: none; /* изчезва до момента на победителя */
   }
 </style>
 </head>
@@ -74,7 +78,8 @@
 Водата в чашата се зарежда от символа на мадалата! Очаквайте!
 </div>
 
-<div id="таймер">Оставащо време: <span id="часове">00</span>:<span id="минути">00</span>:<span id="секунди">00</span></div>
+<div id="таймер-заглавие">ОСТАВАЩО ВРЕМЕ</div>
+<div id="таймер">---</div>
 <div id="участници"></div>
 
 <button id="бутон">ПОБЕДИТЕЛ</button>
@@ -113,6 +118,7 @@ let текущ = 0;
 const участнициDiv = document.getElementById("участници");
 const бутон = document.getElementById("бутон");
 const резултат = document.getElementById("резултат");
+const таймерDiv = document.getElementById("таймер");
 
 // Въртене на имената
 let въртене = setInterval(() => {
@@ -132,6 +138,7 @@ function обновиТаймера() {
         clearInterval(countdown);
         // Автоматично теглене
         const победител = участници[Math.floor(Math.random() * участници.length)];
+        резултат.style.display = "inline-block";
         резултат.textContent = `ЧЕСТИТО ${победител.toUpperCase()}!
 Моля, свържете се с нас за да получите своята награда!!!
 
@@ -146,42 +153,9 @@ function обновиТаймера() {
 Бъдете здрави и благословени, нека светлината на доброто се излива върху Вас.`;
 
         бутон.style.display = "none"; 
+        таймерDiv.textContent = "";
         return;
     }
 
-    const часове = Math.floor((разлика / (1000*60*60)) % 24);
-    const минути = Math.floor((разлика / (1000*60)) % 60);
-    const секунди = Math.floor((разлика / 1000) % 60);
-
-    document.getElementById("часове").textContent = String(часове).padStart(2,'0');
-    document.getElementById("минути").textContent = String(минути).padStart(2,'0');
-    document.getElementById("секунди").textContent = String(секунди).padStart(2,'0');
-}
-
-// Таймер
-let countdown = setInterval(обновиТаймера,1000);
-обновиТаймера();
-
-// Ръчно теглене
-бутон.addEventListener("click", () => {
-    const победител = участници[Math.floor(Math.random() * участници.length)];
-    резултат.textContent = `ЧЕСТИТО ${победител.toUpperCase()}!
-Моля, свържете се с нас за да получите своята награда!!!
-
-Ще публикуваме снимка с победителя и наградата, ако той предостави такава.
-
-Благодарим на всички, които участваха.
-
-За утешителна награда участниците получават:
-
-БЕЗПЛАТНА ДОСТАВКА С ТЕСТ И ПРЕГЛЕД на всички продукти в Tibet Vital Store!!!
-
-Бъдете здрави и благословени, нека светлината на доброто се излива върху Вас.`;
-
-    бутон.style.display = "none";
-    clearInterval(countdown);
-});
-</script>
-
-</body>
-</html>
+    const дни = Math.floor(разлика / (1000*60*60*24));
+    const часове = Math.floor((разлика / (
